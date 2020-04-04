@@ -55,7 +55,7 @@ class Cinemagia():
           chNodes = chContainerNodes[i].findChildren('a', class_="station-link", href=True)
           j = 0
           for chNode in chNodes:
-            channelName = chNode.string
+            channelName = chNode.string.encode('utf-8')
             print(channelName)
             
             if(dlg):
