@@ -1,4 +1,5 @@
-import urllib.request
+import urllib2
+# import urllib.request
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 from pytz import timezone
@@ -18,22 +19,26 @@ class Cinemagia():
     'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0'
   }
 
-  debug = True
+  debug = False
   filePath = 'tvxml.xml'
 
   def __init__( self , *args, **kwargs):
     if(kwargs.get('filePath')):
       self.filePath=kwargs.get('filePath')
 
-  def execute(self):
+  def execute(self, dlg=None):
 
     tv = ET.Element('tv')
     tv.set('source-info-url', self.url)
     tv.set('source-info-name', 'cinemagia')
+ 
+    req = urllib2.Request(self.url, None, self.headers)
+    response = urllib2.urlopen(req)
+    html = response.read()
 
-    request = urllib.request.Request(self.url, None, self.headers)
-    with urllib.request.urlopen(request) as response:
-      html = response.read()
+    # request = urllib.request.Request(self.url, None, self.headers)
+    # with urllib.request.urlopen(request) as response:
+    #   html = response.read()
 
     soup = BeautifulSoup(html, "html.parser")
     items = soup.find_all('div', class_="col")
@@ -43,36 +48,52 @@ class Cinemagia():
       i = 0
       for catNode in catNodes:
         #print(catNode)
-        catName = catNode.string.split('-')[1].strip().lower()
+        catName = catNode.string.split('-')[1].strip().lower().encode('utf-8')
         if((catName != 'canale hd') and (catName != 'erotice')):
           print(catName)
           # print(chContainerNodes[i])
           chNodes = chContainerNodes[i].findChildren('a', class_="station-link", href=True)
+          j = 0
           for chNode in chNodes:
             channelName = chNode.string
             print(channelName)
+            
+            if(dlg):
+              percent = (j + 1) * 100 / len(chNodes)
+              dlg.update(percent, channelName, catName)
+
             channel = ET.SubElement(tv, 'channel')
             channel.set('id', channelName)
             displayName = ET.SubElement(channel, 'display-name')
             displayName.text = channelName
             self.scrapEpg(chNode['href'], tv, channelName)
 
+            j += 1
             if(self.debug):
               break
-        i = i + 1
+
+        i += 1
         if(self.debug):
           break
       if(self.debug):
         break
-    
+        
     tree = ET.ElementTree(tv)
     tree.write(self.filePath, encoding='utf-8', xml_declaration=True)
+    
+    if(dlg):
+      dlg.close()
 
   def scrapEpg(self, url, tv, channelName):
     #print(url)
-    request = urllib.request.Request(url, None, self.headers)
-    with urllib.request.urlopen(request) as response:
-      html = response.read()
+
+    req = urllib2.Request(url, None, self.headers)
+    response = urllib2.urlopen(req)
+    html = response.read()
+
+    # request = urllib.request.Request(url, None, self.headers)
+    # with urllib.request.urlopen(request) as response:
+    #   html = response.read()
     # print(html)
 
     currentDate = datetime.now(timezone('Europe/Bucharest'))
@@ -142,9 +163,14 @@ class Cinemagia():
 
   def getEventDetails(self, url, programmeElm):
     # print(url)
-    request = urllib.request.Request(url, None, self.headers)
-    with urllib.request.urlopen(request) as response:
-      html = response.read()
+
+    req = urllib2.Request(url, None, self.headers)
+    response = urllib2.urlopen(req)
+    html = response.read()
+
+    # request = urllib.request.Request(url, None, self.headers)
+    # with urllib.request.urlopen(request) as response:
+    #   html = response.read()
 
     soup = BeautifulSoup(html, "html.parser")
 
