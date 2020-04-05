@@ -1,14 +1,13 @@
 import xbmc, xbmcgui, xbmcaddon
 import os
+from os.path import expanduser
 from resources.cinemagia.cinemagia import Cinemagia
 import time
 
 addon = xbmcaddon.Addon('service.cinemagia')
-PROFILE = xbmc.translatePath(addon.getAddonInfo('profile'))
-if(not os.path.isdir(PROFILE)):
-  os.mkdir(PROFILE)  
 TVXML_FILE = 'tvxml.xml'
-filePath = os.path.join(PROFILE, TVXML_FILE)
+HOME = expanduser("~")
+filePath = os.path.join(HOME, TVXML_FILE)
 
 fileTime = None
 if (os.path.isfile(filePath)):

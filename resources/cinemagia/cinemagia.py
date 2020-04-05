@@ -48,15 +48,15 @@ class Cinemagia():
       i = 0
       for catNode in catNodes:
         #print(catNode)
-        catName = catNode.string.split('-')[1].strip().lower().encode('utf-8')
+        catName = catNode.string.split('-')[1].strip().lower()
         if((catName != 'canale hd') and (catName != 'erotice')):
-          print(catName)
+          print(catName.encode('utf-8'))
           # print(chContainerNodes[i])
           chNodes = chContainerNodes[i].findChildren('a', class_="station-link", href=True)
           j = 0
           for chNode in chNodes:
-            channelName = chNode.string.encode('utf-8')
-            print(channelName)
+            channelName = chNode.string
+            print(channelName.encode('utf-8'))
             
             if(dlg):
               percent = (j + 1) * 100 / len(chNodes)
@@ -78,6 +78,11 @@ class Cinemagia():
       if(self.debug):
         break
         
+
+    # data = ET.tostring(tv)
+    # fileXML = open(self.filePath, "w")
+    # fileXML.write(data.decode('utf-8'), encoding='utf-8', xml_declaration=True)
+
     tree = ET.ElementTree(tv)
     tree.write(self.filePath, encoding='utf-8', xml_declaration=True)
     

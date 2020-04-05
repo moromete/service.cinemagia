@@ -1,2 +1,6 @@
-0.0.1
+0.0.2 2020-04-05
+ 1. fix utf8 encoding issues
+ 2. change xml file location to system home folder
+
+0.0.1 2020-04-04
  1. first release
