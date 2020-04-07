@@ -15,7 +15,8 @@ if (os.path.isfile(filePath)):
 currentTime = time.time()
 
 if(fileTime == None or currentTime - fileTime > (3600 * 12)): #older than 12hours
-  cm = Cinemagia(filePath = filePath)
+  cats = addon.getSetting('cats').split(',')
+  cm = Cinemagia(filePath = filePath, cats = cats, epg_details = addon.getSetting('epg_details'))
   # cm.debug = True
   pDialog = xbmcgui.DialogProgressBG()
   pDialog.create(addon.getLocalizedString(30000), addon.getLocalizedString(30001))

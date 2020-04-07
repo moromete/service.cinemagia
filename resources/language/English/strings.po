@@ -22,3 +22,16 @@ msgstr ""
 msgctxt "#30001"
 msgid "Downloading EPG ..."
 msgstr ""
+
+msgctxt "#30002"
+msgid "General"
+msgstr ""
+
+msgctxt "#30003"
+msgid "Categories"
+msgstr ""
+
+msgctxt "#30004"
+msgid "Load program details"
+msgstr ""
+

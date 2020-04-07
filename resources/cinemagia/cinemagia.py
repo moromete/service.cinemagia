@@ -21,10 +21,16 @@ class Cinemagia():
 
   debug = False
   filePath = 'tvxml.xml'
+  cats = None
+  epg_details = 'true'
 
   def __init__( self , *args, **kwargs):
     if(kwargs.get('filePath')):
       self.filePath=kwargs.get('filePath')
+    if(kwargs.get('cats')):
+      self.cats=kwargs.get('cats')
+    if(kwargs.get('epg_details')):
+      self.epg_details=kwargs.get('epg_details')
 
   def execute(self, dlg=None):
 
@@ -49,7 +55,7 @@ class Cinemagia():
       for catNode in catNodes:
         #print(catNode)
         catName = catNode.string.split('-')[1].strip().lower()
-        if((catName != 'canale hd') and (catName != 'erotice')):
+        if(self.validCat(catName)):
           print(catName.encode('utf-8'))
           # print(chContainerNodes[i])
           chNodes = chContainerNodes[i].findChildren('a', class_="station-link", href=True)
@@ -161,7 +167,7 @@ class Cinemagia():
           dateElm.text = startDateTime.strftime("%Y%m%d")
 
           #event details
-          if(titleLinkNode):
+          if((self.epg_details == 'true') and titleLinkNode):
             self.getEventDetails(titleLinkNode['href'], programmeElm)
 
           i=i+1
@@ -204,3 +210,17 @@ class Cinemagia():
     descElm.text = descAll
     descElm.set('lang', 'ro')
    
+  def validCat(self, catName):
+    catName = catName.encode('utf-8')
+    # print(catName)
+
+    if((catName == 'canale hd') and (catName == 'erotice')):
+      return False
+
+    if(self.cats == None):
+      return True
+    try:
+      if(self.cats.index(catName) >=0):
+        return True
+    except:
+      return False
