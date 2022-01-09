@@ -1,27 +1,21 @@
-import xbmc, xbmcgui, xbmcaddon
-import os
-from os.path import expanduser
-from resources.cinemagia.cinemagia import Cinemagia
-import time
+import xbmc
+from resources.lib.functions import  addon, log, update
+from resources.lib.server import Server
 
-addon = xbmcaddon.Addon('service.cinemagia')
-TVXML_FILE = 'tvxml.xml'
-HOME = expanduser("~")
-filePath = os.path.join(HOME, TVXML_FILE)
+def main():
 
-fileTime = None
-if (os.path.isfile(filePath)):
-  fileTime = os.path.getmtime(filePath)
-currentTime = time.time()
+    server = Server()
+    log('server started')
+    server.loop()
+    monitor = xbmc.Monitor()
 
-if(fileTime == None or currentTime - fileTime > (3600 * 12)): #older than 12hours
-  cats = addon.getSetting('cats').split(',')
-  cm = Cinemagia(filePath = filePath, cats = cats, epg_details = addon.getSetting('epg_details'))
-  # cm.debug = True
-  pDialog = xbmcgui.DialogProgressBG()
-  pDialog.create(addon.getLocalizedString(30000), addon.getLocalizedString(30001))
-  time.sleep(1)
-  cm.execute(dlg = pDialog)
-  
+    while not monitor.abortRequested():
+        if monitor.waitForAbort(1):
+            break
+        xbmc.sleep(1000)
+    server.stop()
 
+update()
 
+if addon.getSetting('web_server') == 'true':
+    main()
