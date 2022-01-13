@@ -48,7 +48,10 @@ def update(force=False):
             days = int(addon.getSetting('days'))
             # cm.debug = True
             cm = Cinemagia(filePath = filePath, wanted=final_lines, days=days, epg_details = addon.getSetting('epg_details'))
-            pDialog = xbmcgui.DialogProgressBG()
-            pDialog.create('Cinemagia', 'Downloading EPG...')
-            time.sleep(1)
+            if addon.getSetting('progress'):
+                pDialog = xbmcgui.DialogProgressBG()
+                pDialog.create('Cinemagia', 'Downloading EPG...')
+                time.sleep(1)
+            else:
+                pDialog = False
             cm.execute(dlg = pDialog)
