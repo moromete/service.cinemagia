@@ -53,5 +53,5 @@ def update(force=False):
                 pDialog.create('Cinemagia', 'Downloading EPG...')
                 time.sleep(1)
             else:
-                pDialog = False
+                pDialog = None
             cm.execute(dlg = pDialog)
